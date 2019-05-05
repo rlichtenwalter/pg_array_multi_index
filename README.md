@@ -12,12 +12,62 @@ s <code>A[i:j]</code>, where <code>i</code> and <code>j</code> specify the lower
 <h3>Installation</h3>
 <p>The following should be performed as root or at least in such a way that the performing user has sufficient privileges to perform the <code>make install</code> step.</p>
 
-<p>
-  <pre>
+<pre>
 curl -s -S -L https://github.com/rlichtenwalter/pg_array_multi_index/archive/master.zip &gt; pg_array_multi_index.zip
 unzip pg_array_multi_index.zip
 (cd pg_array_multi_index-master &amp;&amp; make PG_CONFIG=&lt;optional custom pg_config path&gt;)
 (cd pg_array_multi_index-master &amp;&amp; make PG_CONFIG=&lt;optional custom pg_config path&gt; install)
 (cd ~postgres &amp;&amp; sudo -u postgres psql -c 'CREATE EXTENSION pg_array_multi_index;')
-  </pre>
-</p>
+</pre>
+
+<h3>Usage</h3>
+<pre>
+testuser=# SELECT array_multi_index( ARRAY[0,1,2,3,4,5,6,7,8,9], ARRAY[1,2,3] );
+ array_multi_index
+-------------------
+ {0,1,2}
+(1 row)
+
+
+testuser=# SELECT array_multi_index( ARRAY[0,NULL,2,3,4,5,6,7,8,9], ARRAY[1,2,3] );
+ array_multi_index
+\-------------------
+ {0,NULL,2}
+(1 row)
+
+testuser=# SELECT array_multi_index( ARRAY[0,1,2,3,4,5,6,7,8,9], ARRAY[]::INTEGER[] );
+ array_multi_index
+\-------------------
+ {}
+(1 row)
+
+testuser=# SELECT array_multi_index( ARRAY[0,1,2,3,4,5,6,7,8,9], ARRAY[3,5,7,7,7,9] );
+ array_multi_index
+\-------------------
+ {2,4,6,6,6,8}
+(1 row)
+
+testuser=# SELECT array_multi_index( ARRAY[0,1,2,3,4,5,6,7,8,9], ARRAY[2,NULL,4] );
+ array_multi_index
+\-------------------
+ {1,NULL,3}
+(1 row)
+
+testuser=# SELECT array_multi_index( ARRAY[0,1,2,3,4,5,6,7,8,9], NULL );
+ array_multi_index
+\-------------------
+
+(1 row)
+
+testuser=# SELECT array_multi_index( NULL::INTEGER[], ARRAY[2,4] );
+ array_multi_index
+\-------------------
+
+(1 row)
+
+testuser=# SELECT array_multi_index( ARRAY['I','work','with','any','array','type.'], ARRAY[1,2,3,4,5,6] );
+       array_multi_index
+\-------------------------------
+ {I,work,with,any,array,type.}
+(1 row)
+</pre>
